@@ -1,0 +1,121 @@
+#include<stdio.h>
+#include<string.h>
+#include<stdlib.h>
+
+#define MAXSIZE 100              //Max size of infix notation
+
+struct Stack {
+    int t;
+    unsigned value;
+    char* arr;
+};
+
+
+// Function to initialize a stack
+struct Stack* createStack(unsigned value) {
+    struct Stack* stack = (struct Stack*)malloc(sizeof(struct Stack));
+    stack->t = -1;
+    stack->value = value;
+    stack->arr = (char*)malloc(stack->value * sizeof(char));
+    return stack;
+}
+ 
+ 
+
+int Full(struct Stack* stack){
+    return stack->t ==stack->value-1;
+}
+
+int Empty(struct Stack* stack)
+{
+    return stack->t ==-1;
+}
+
+void push(struct Stack* stack, char i)
+{
+    if(Full(stack))
+    {
+        printf("Overflow!");
+        return;
+    }
+
+    stack->arr[++stack->t]=i;
+}
+
+char pop(struct Stack* stack)
+{
+    if(Empty(stack))
+    {
+        printf("Underflow!");
+        return '\0' ;
+    }
+    return stack->arr[stack->t--];
+}
+
+int Pre(char op)                              // check precedence of operators encountered
+{
+    if (op == '+' || op == '-')
+    return 1;
+    else if(op=='*'||op == '/')
+    return 2;
+    else
+    return 0;
+}
+
+void func(char* infix) // the conversion function
+{
+    struct Stack* stack = createStack(strlen(infix));
+    int k, j;
+    for(k=0, j=-1; infix[k]; ++k)
+    {
+        if ((infix[k]>= 'a' && infix[k] <= 'z')|| (infix[k]>= 'A' && infix[k] <= 'Z'))
+        {
+            printf("%c", infix[k]);
+
+        }
+        else if (infix[k]=='('){
+            push(stack, infix[k]);
+        }
+        else if(infix[k]== ')')
+        {
+            while(!Empty(stack)&& stack-> arr[stack->t] != '(')
+            {
+                printf("%c", pop(stack));
+            }
+            if(!Empty(stack) && stack->arr[stack->t] != '(')
+            {
+                printf("Oh no, Invalid!\n");
+                return;
+            }
+            else{
+                pop(stack);
+            }
+        }
+        else{
+
+            while(!Empty(stack) && Pre(infix[k]) <= Pre(stack->arr[stack->t]))
+            {
+                printf("%c", pop(stack));
+            }
+            push(stack, infix[k]);
+        }
+    }
+
+    while(Empty(stack))
+    {
+        printf("%c", pop(stack));
+    }
+}
+    
+
+int main()
+{
+    char infix[MAXSIZE];
+
+    printf("Enter an infix notation(Max 100):");
+    fgets(infix, sizeof(infix), stdin);
+
+    printf("The postfix notation will be :");
+    func(infix);
+    return 0;
+}
