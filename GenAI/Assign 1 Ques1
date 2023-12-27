@@ -1,0 +1,10 @@
+#Simple Interest program
+print("Hi, Welcome! To find the time period of interest, please answer the following commands:")
+simple_interest = float( input("\nEnter the simple interest amount:"))
+principle = float(input("\nEnter the principle amount:"))
+rate = float(input("\nEnter the rate of interest:"))
+
+Timeperiod = float((simple_interest*100)/(principle*rate))
+
+print("\nThe time period for your simple interest is:%.2f" %Timeperiod)
+print("\n Thank you.")
