@@ -1,0 +1,77 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_VERTICES 20
+#define MAX_EDGES 50
+
+struct Edge {
+    int src, dest, weight;
+};
+
+struct Graph {
+    int V, E;
+    struct Edge edges[MAX_EDGES];
+};
+
+int findParent(int parent[], int i) {
+    if (parent[i] == -1)
+        return i;
+    return findParent(parent, parent[i]);
+}
+
+void unionSets(int parent[], int x, int y) {
+    int xroot = findParent(parent, x);
+    int yroot = findParent(parent, y);
+    parent[xroot] = yroot;
+}
+
+int compareEdges(const void* a, const void* b) {
+    return ((struct Edge*)a)->weight - ((struct Edge*)b)->weight;
+}
+
+void kruskalMST(struct Graph* graph) {
+    int V = graph->V;
+    struct Edge result[V];
+    int e = 0;
+    int i = 0;
+
+    qsort(graph->edges, graph->E, sizeof(graph->edges[0]), compareEdges);
+
+    int parent[MAX_VERTICES];
+    for (int v = 0; v < V; v++)
+        parent[v] = -1;
+
+    while (e < V - 1 && i < graph->E) {
+        struct Edge next_edge = graph->edges[i++];
+
+        int x = findParent(parent, next_edge.src);
+        int y = findParent(parent, next_edge.dest);
+
+        if (x != y) {
+            result[e++] = next_edge;
+            unionSets(parent, x, y);
+        }
+    }
+
+    printf("Edge   Weight\n");
+    for (i = 0; i < e; i++)
+        printf("%d - %d    %d\n", result[i].src, result[i].dest, result[i].weight);
+}
+
+int main() {
+    struct Graph graph;
+    printf("Name: Ananta Walli");
+    printf("\nEnrollment Number:A2305221322");
+    printf("\nEnter the number of vertices: ");
+    scanf("%d", &graph.V);
+    printf("Enter the number of edges: ");
+    scanf("%d", &graph.E);
+
+    printf("Enter edge details (src, dest, weight):\n");
+    for (int i = 0; i < graph.E; i++)
+        scanf("%d %d %d", &graph.edges[i].src, &graph.edges[i].dest, &graph.edges[i].weight);
+
+    kruskalMST(&graph);
+
+    return 0;
+}
