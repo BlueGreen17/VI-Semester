@@ -1,0 +1,91 @@
+// Write a Program to convert Infix notation to Postfix notation.
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define size 100
+
+//Lets define function for the operation of stack: Empty, Push, Pop.
+
+int Empty(int top) {
+    return top == -1;
+}
+
+void push(char stack[], int* top, char value) {
+    stack[++(*top)] = value;
+}
+
+char pop(char stack[], int* top) {
+    if (!Empty(*top))
+        return stack[(*top)--];
+    return 0;
+}
+
+int Op(char ch) {
+    return (ch == '+' || ch == '-' || ch == '*' || ch == '/');
+}
+
+int Precedence(char ch) {
+    if (ch == '+' || ch == '-')
+        return 1;
+    else if (ch == '*' || ch == '/')
+        return 2;
+    else
+        return 0;
+}
+
+// Infix to Postfix conversion
+void conversion(char* infix, char* postfix) {
+    char stack[size];
+    int top = -1;
+    int a, b;
+
+    for (a = 0, b = -1; infix[a]; ++a) {
+        // Operand - append to the output
+        if ((infix[a] >= 'a' && infix[a] <= 'z') || (infix[a] >= 'A' && infix[a] <= 'Z'))
+            postfix[++b] = infix[a];
+
+        // Operator
+        else if (Op(infix[a])) {
+            while (!Empty(top) && Precedence(infix[a]) <= Precedence(stack[top]))
+                postfix[++b] = pop(stack, &top);
+            push(stack, &top, infix[a]);
+        }
+
+        // Parenthesis
+        else if (infix[a] == '(')
+            push(stack, &top, infix[a]);
+
+        else if (infix[a] == ')') {
+            while (!Empty(top) && stack[top] != '(')
+                postfix[++b] = pop(stack, &top);
+            if (!Empty(top) && stack[top] != '(') {
+                printf("Invalid expression\n");
+                return; // Incase of invalid exp
+            } else {
+                pop(stack, &top); // Pop (
+            }
+        }
+    }
+
+    // Remaining operators from stack need to removed
+    while (!Empty(top))
+        postfix[++b] = pop(stack, &top);
+
+    postfix[++b] = '\0';
+}
+
+int main() {
+    char infix[size];
+    char postfix[size];
+
+    printf("Hello User\n");
+    printf("Please enter a valid infix notation: ");
+    scanf("%s", infix);
+
+    conversion(infix, postfix);
+
+    printf("The postfix notation will be: %s\n", postfix);
+
+    return 0;
+}
