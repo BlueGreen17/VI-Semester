@@ -1,0 +1,37 @@
+#include<stdio.h>
+
+int main()
+{
+    FILE *File1, *File2;
+    char a;
+
+    //Read Mode: For first file
+    File1 = fopen("File1.txt","rb");
+    if(File1 == NULL)
+    {
+        perror("Error! File is not correct");
+        return 1;
+    }
+
+    //Write Mode: Destination File
+    File2 = fopen("File2.txt", "wb");
+    if(File2 == NULL)
+    {
+        perror("Error!");
+        return 1;
+    }
+
+    //Transfer
+    while((a=fgetc(File1)) != EOF)
+    {
+        fputc(a, File2);
+    }
+
+    fclose(File1);
+    fclose(File2);
+
+    printf("All Done!");
+    
+    
+    return 0;
+}
