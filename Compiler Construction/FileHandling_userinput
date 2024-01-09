@@ -1,0 +1,54 @@
+#include<stdio.h>
+#include<string.h>
+
+int main() {
+    FILE *src_file, *dest_File;
+    
+    char any;
+    src_file = fopen("one.txt", "w"); 
+    if (src_file == NULL) {
+        printf("Error!");
+        return 1;
+    }
+
+    printf("Enter the information you want to add :\n");
+
+    while ((any = getchar()) != EOF) {
+        fputc(any, src_file);
+    }
+    
+      
+    
+    //Copying contents now:
+    src_file = fopen("one.txt", "r");  
+    if (src_file == NULL) {
+        printf("Error!");
+        return 1;
+    }
+
+    dest_File = fopen("two.txt", "w");  
+    if (dest_File == NULL) {
+        printf("Error opening destination file!");
+        fclose(src_file);
+        return 1;
+    }
+
+    printf("Copying contents!\n");
+
+    while ((any = fgetc(src_file)) != EOF) {
+        fputc(any, dest_File);
+    }
+
+    fclose(src_file);
+    fclose(dest_File);
+
+    printf("Operation executed.\n");
+
+    return 0;
+}
+
+
+//functions like fopen and fclose use pointers
+//A FILE pointer is a reference to a particular position in the opened file. 
+//It is used in file handling to perform all file operations such as read, write, close, etc.
+// We use the FILE macro to declare the file pointer variable. The FILE macro is  
