@@ -1,0 +1,35 @@
+#Water Jug Problem
+def waterjug():
+    capacity_jug1 = int(input("Enter the capacity of jug 1: "))
+    capacity_jug2 = int(input("Enter the capacity of jug 2: "))
+    amt_to_be_measured = int(input("Enter the amount of water to be measured: "))
+
+    #initialising 
+    jug1 = 0
+    jug2 = 0
+
+     
+    while jug1 != amt_to_be_measured and jug2 != amt_to_be_measured:
+        # this is a loop that will execute until the target amount is reached
+        print(f"\nJug 1: {jug1}/{capacity_jug1} | Jug 2: {jug2}/{capacity_jug2}")  
+
+        
+        if jug1 == 0:
+            jug1 = capacity_jug1  # fill in jug 1
+        elif jug2  == capacity_jug2:  
+            jug2 = 0            # empty jug 2 if its fully filled.
+        else:
+            
+            pour_amount = min(jug1, capacity_jug2 - jug2)   # pour onto whatever has min value
+            jug1 -= pour_amount   
+            jug2 += pour_amount
+
+    print(f"\nJug 1: {jug1}/{capacity_jug1} | Jug 2: {jug2}/{capacity_jug2}")
+    print("\nThe amount of water has been measured as required successfully!")
+
+if __name__ == "__main__":
+    waterjug()
+
+
+
+
