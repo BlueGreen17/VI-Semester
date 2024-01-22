@@ -1,0 +1,109 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char *Keyword[] = { "int", "string", "char", "void", "printf", "return", "if", "else", "while", "for"};
+
+
+char *Operator[] = { "+", "-", "/", "*" };
+
+char *Punctuator[] = {  ",", ".", "(", ")", "{", "}", ";", ":", "[", "]"};
+
+char *Literals[] ={
+    " ","0"
+}
+
+char **var_ref_table = NULL;
+int var_ref_table_size = 0;
+
+int UniqueVariable(char *token) {
+    for (int a = 0; a < var_ref_table_size; a++) {
+        if (strcmp(token, var_ref_table[a]) == 0) {
+            return 0;
+        }
+    }
+    for (int b = 0; b < sizeof(Keyword) / sizeof(Keyword[0]); b++) {
+        if (strcmp(token, Keyword[b]) == 0) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+int main() {
+    char token[100];
+
+    int keyword = 0;
+    int Functions_ud = 0;
+    int variables = 0;
+    int literals = 0;
+    int operator= 0;
+    int punctuator = 0;
+    int counttokens = 0;
+
+    FILE *src_file = fopen("one.txt", "r");
+    FILE*dest_file = fopen("two.txt", "w");
+
+    while (fscanf(src_file , "%s", token) != EOF) {
+        for (int i = 0; i < sizeof(Keyword) / sizeof(Keyword[0]); i++) {
+            if (strcmp(token, Keyword[i]) == 0) {
+                keyword++;
+            }
+        }
+        for (int j = 0; j < sizeof(Punctuator) / sizeof(Punctuator[0]); j++) {
+            if (strcmp(token, Punctuator[j]) == 0) {
+                punctuator++;
+            }
+        }
+        for (int k = 0; k < sizeof(Operator) / sizeof(Operator[0]); k++) {
+            if (strcmp(token, Operator[k]) == 0) {
+                operator++;
+            }
+        }
+
+        for(int n = 0; n< sizeof(Literals)/sizeof(Literals[0]; n++))
+        {
+            if(strcmp(token, Literals[n])==0)
+            {
+                literals++;
+
+            }
+        }
+        if ((token[0] >= 'a' && token[0] <= 'z') || (token[0] >= 'A' && token[0] <= 'Z')) {
+            if (UniqueVariable(token)) {
+                var_ref_table = realloc( var_ref_table, ( var_ref_table_size + 1) * sizeof(char *));
+                var_ref_table [var_ref_table_size] = strdup(token);
+                 var_ref_table_size++;
+                variables++;
+            }
+        }
+        if (token[0] == '(' && token[strlen(token) - 1] == ')') {
+            Functions_ud++;
+        }
+       // if (atoi(token) != 0 || (token[0] == '\"' && token[strlen(token) - 1] == '\"')) {
+           // literals++;
+        //}
+        counttokens++;
+        fprintf(dest_file, "%s", token);
+    }
+
+    printf("Total no of Keywords: %d\n", keyword);
+    printf("Total no of Variables: %d\n", variables);
+    printf("Total no of User Defined Functions: %d\n", Functions_ud);
+    printf("Total no of Literals: %d\n", literals);
+    printf("tTotal no of Punctuators: %d\n", punctuator);
+    printf("Total no of Operators: %d\n", operator);
+    printf("Total number of tokens: %d\n", total_tokens);
+   
+
+    fclose(src_file);
+    fclose(dest_file);
+
+    for (int i = 0; i < var_ref_table_size; i++) 
+    {
+        free(var_ref_table[i]);
+    }
+    free(var_ref_table);
+
+    return 0;
+}
