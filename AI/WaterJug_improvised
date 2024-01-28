@@ -1,0 +1,82 @@
+global amount1
+global a
+global amount2
+global b
+
+amount1 = int(input("Enter amount for first jug = "))
+amount2 = int(input("Enter amount for second jug = "))
+
+a = 0
+b = 0
+
+def fill_jug1():
+    global amount1, amount2,a,b
+    a = amount1
+    print("Water level in A = ",a)
+    print("Water level in B = ",b)
+
+def fill_jug2():
+    global amount1, amount2,a,b
+    b =  amount2
+    print("Water level in A = ",a)
+    print("Water level in B = ",b)
+
+def empty_jug1():
+    global amount1, amount2,a,b
+    a = 0
+    print("Water level in A = ",a)
+    print("Water level in B = ",b)
+
+def empty_Jug2():
+    global amount1, amount2,a,b
+    b = 0
+    print("Water level in A = ",a)
+    print("Water level in B = ",b)
+
+def transderJug1toJug2():
+    global amount1, amount2,a,b
+    if (b == 0 and a >=  amount2):
+        b =  amount2
+        a = a -  amount2
+    elif (b == 0 and a <  amount2):
+        b = a
+        a = 0
+    elif (b > 0 and b <  amount2 and ( amount2-b)<a):
+        a = a-( amount2-b)
+        b = b+( amount2-b)
+    elif (b > 0 and b <  amount2 and ( amount2-b)>a):
+        b = b + a
+        a = 0
+    print("\n")
+    print("Water level in A = ",a)
+    print("Water level in B = ",b)
+    print("\n")
+
+def transferJug2toJug1():
+    global amount1, amount2,a,b
+    if (a == 0 and b ==  amount2):
+        a =  amount2
+        b = 0
+    elif (a == 0 and b <  amount2):
+        a = b
+        b = 0
+    elif (a > 0 and a + b <= amount1):
+        a = a+b
+        b = 0
+    elif (a > 0 and a + b > amount1):
+        b = b - (amount1-a)
+        a = amount1
+
+    print("Water level in A = ",a)
+    print("Water level in B = ",b)
+
+
+while (a != 2):
+    if (a == 0):
+        fill_jug1()
+    if (b ==  amount2):
+        empty_Jug2()
+    transderJug1toJug2()
+
+print("Water level in A = ",a)
+print("Water level in B = ",b)
