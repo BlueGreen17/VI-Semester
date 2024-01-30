@@ -1,0 +1,151 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char *Keywords[] = {"int", "string", "char", "void", "printf", "return", "if", "else", "while", "for"};
+
+char *Operators[] = {"+", "-", "/", "*", "=", "=="};
+
+char *Punctuators[] = {",", ".", "(", ")", "{", "}", ";", ":", "[", "]"};
+
+char **var_ref_table = NULL;
+int var_ref_table_size = 0;
+
+int Keyword(char *token) {
+    for (int i = 0; i < sizeof(Keywords) / sizeof(Keywords[0]); i++) {
+        if (strcmp(token, Keywords[i]) == 0) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+int Operator(char *token) {
+    for (int i = 0; i < sizeof(Operators) / sizeof(Operators[0]); i++) {
+        if (strcmp(token, Operators[i]) == 0) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+int Punc(char *token) {
+    for (int i = 0; i < sizeof(Punctuators) / sizeof(Punctuators[0]); i++) {
+        if (strcmp(token, Punctuators[i]) == 0) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+//check for variables by mentioning using variable defining rules.
+int Var_Name(char *token) {
+    if (!isalpha(token[0]) && token[0] != '_') {
+        return 0; 
+    }
+
+    for (int i = 1; token[i] != '\0'; i++) {
+        if (!isalnum(token[i]) && token[i] != '_') {
+            return 0;  
+        }
+    }
+
+    return 1;  
+}
+
+int main() {
+    char token[100];
+    int keywordCount = 0;
+    int functionCount = 0;
+    int variableCount = 0;
+    int operatorCount = 0;
+    int punctuatorCount = 0;
+    int tokenCount = 0;
+    int commentCount = 0;
+
+    FILE *src_file = fopen("one.txt", "r");
+    FILE *dest_file = fopen("two.txt", "w");
+
+    int state = 0; 
+
+    while (fscanf(src_file, "%s", token) != EOF) 
+    {
+        
+        if (token[0] == '/' && token[1] == '/') {   //remove comments
+            commentCount++;
+            while (fgetc(src_file) != '\n');
+            continue;
+        }
+
+        
+        size_t len = strlen(token);                  //removale of spaces
+        for (size_t i = 0; i < len; i++) {
+            if (isspace(token[i])) {
+                continue;
+            }
+            fprintf(dest_file, "%c", token[i]);
+        }
+
+        tokenCount++;
+
+        switch (state) {
+            case 0: 
+                if (Keyword(token)) {
+                    keywordCount++;
+                } 
+                else if (Operator(token)) {
+                    operatorCount++;
+                }
+                else if (Punc(token)) {
+                    punctuatorCount++;
+                } 
+                else if (strcmp(token, "main") == 0) {
+                    functionCount++;
+                } 
+                else if (Var_Name(token)) {
+                    int isExistingVariable = 0;
+                    for (int i = 0; i < var_ref_table_size; i++) {
+                        if (strcmp(token, var_ref_table[i]) == 0) {
+                            isExistingVariable = 1;
+                            break;
+                        }
+                    }
+
+                    if (!isExistingVariable) {
+                        var_ref_table_size++;
+                        var_ref_table = realloc(var_ref_table, var_ref_table_size * sizeof(char *));
+                        var_ref_table[var_ref_table_size - 1] = strdup(token);
+                        variableCount++;
+                    }
+
+                    state = 1;
+                }
+                break;
+
+            case 1: 
+                if (!Var_Name(token)) {
+                    state = 0;
+                }
+                break;
+        }
+    }
+
+    printf("Total number of Keywords: %d\n", keywordCount);
+    printf("Total number of User Defined Functions: %d\n", functionCount);
+    printf("Total number of variables: %d\n", variableCount);
+    printf("Total number of Punctuators: %d\n", punctuatorCount);
+    printf("Total number of Operators: %d\n", operatorCount);
+    printf("Total number of Tokens: %d\n", tokenCount);
+    printf("Total number of Comments: %d\n", commentCount);
+
+    fclose(src_file);
+    fclose(dest_file);
+
+    for (int i = 0; i < var_ref_table_size; i++) {
+        free(var_ref_table[i]);
+    }
+    free(var_ref_table);
+
+    return 0;
+}
