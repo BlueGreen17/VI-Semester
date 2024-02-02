@@ -1,0 +1,41 @@
+def move(a, b, m, vis):
+    k = len(m)   # square matrix
+    return 0 <= a < k and 0 <= b < k and m[a][b] == 1 and not vis[a][b]
+
+def maze_problem(m):
+    k = len(m)
+    vis = [[False for _ in range(k)] for _ in range(k)]
+
+    def dfs(a, b):
+        if a == k - 1 and b == k - 1: 
+            return [(a, b)]
+
+        vis[a][b] = True
+        directions = [(0, 1), (1, 0), (0, -1), (-1, 0)]
+
+        for df, dg in directions:
+            f, g = a + df, b + dg 
+            if move(f, g, m, vis):
+                path = dfs(f, g)
+                if path:
+                    return [(a, b)] + path
+        return []
+
+    solution = dfs(0, 0)  # initial state
+
+    if solution:
+        return solution
+    else:
+        return "Path does not exist"
+
+# User input block
+k = int(input("Please enter the size of the matrix: "))
+maze = []
+
+print("Enter the matrix for the maze where 0 is for an obstacle and 1 for an open path:")
+for _ in range(k):
+    r = list(map(int, input().split()))
+    maze.append(r)
+
+sol_path = maze_problem(maze)
+print("Solution for the recursive maze problem is:", sol_path)
