@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void removingleftrecursion(char arr[], int size, char ss) {
+    char alpha[10];
+    char beta[10];
+    int alphaCount = 0;
+    int betaCount = 0;
+
+    // Separate alpha and beta
+    int i;
+    for (i = 3; i < size; i++) {
+        if (arr[i] == '|') {
+            break;
+        }
+        alpha[alphaCount++] = arr[i];
+    }
+
+    for (i += 1; i < size; i++) {
+        if (arr[i] == '|' || arr[i] == '\n' || arr[i] == '\0') {
+            break;
+        }
+        beta[betaCount++] = arr[i];
+    }
+
+    char rep = 'D';
+    printf("Left recursion removed:\n");
+    printf("%c>%s%c\n", ss, beta, rep);
+    printf("%c>%s%c|%c epsilon\n", rep, alpha, rep, rep);
+}
+
+int main() {
+    FILE *inputfile;
+    inputfile = fopen("leftrecursionfile.txt", "r");
+    if (inputfile == NULL) {
+        printf("Error opening file\n");
+        return 1;
+    }
+
+    char arr[50];
+    int i = 0;
+    while (fgets(arr, sizeof(arr), inputfile) != NULL) {
+        printf("Original Production: %s\n", arr);
+        
+        char ss = arr[0];
+        printf("Start symbol: %c\n", ss);
+
+        // Check for left recursion
+        if (arr[3] == ss) {
+            printf("Left recursion spotted\n");
+            removingleftrecursion(arr, sizeof(arr), ss);
+        } else {
+            printf("No left recursion\n");
+        }
+    }
+
+    fclose(inputfile);
+    return 0;
+}
