@@ -1,0 +1,62 @@
+#include<stdio.h>
+#include<string.h>
+
+int main()
+{
+    char first[20], one[30];
+    char two[20], second[20];
+    char third[20], fourth[20];
+
+    int i, j = 0;
+    int k = 0, l = 0;
+    int position = 0; 
+
+    printf("Enter Production : Y->");
+    gets(first);
+
+    
+    for(i = 0; first[i] != '|'; i++, j++)   //first half of production
+    { 
+        one[j] = first[i];
+    }
+    one[j] = '\0'; //End of string
+
+    
+    for(j = ++i, i = 0; first[j] != '\0'; j++, i++)   //second half of production
+    {
+        two[i] = first[j];
+    }
+    two[i] = '\0'; 
+
+    
+    for(i = 0; one[i] == two[i]; i++) //common part
+    {
+        second[k] = one[i];
+        k++;
+        position = i + 1;
+    }
+    second[k] = 'X'; 
+    second[++k] = '\0';
+
+    
+    for(i = position, j = 0; one[i] != '\0'; i++, j++)
+    {
+        third[j] = one[i];
+    }
+    third[j++] = '|'; 
+
+
+    for(i = position; two[i] != '\0'; i++, j++)
+    {
+        third[j] = two[i];
+        
+    }
+    third[j] = '\0';
+    
+
+    printf("\nAfter Left Factoring, The production will be: : \n");
+    printf(" Y->%s", second);
+    printf("\n X->%s\n", third);
+
+    return 0; 
+}
